@@ -3,28 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>StructoAI — Agent Ingénierie Structurelle</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Playfair+Display:wght@400;700;900&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>Expert Structure by GPH — Agent IA Ingénierie Structurelle</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'><rect x='1' y='1' width='34' height='34' rx='6' stroke='%2300a0d9' stroke-width='1.2' fill='%23001e33'/><rect x='6' y='22' width='24' height='3' rx='1' fill='%2300a0d9'/><rect x='10' y='12' width='3' height='10' rx='1' fill='%2300a0d9' opacity='0.7'/><rect x='23' y='12' width='3' height='10' rx='1' fill='%2300a0d9' opacity='0.7'/><path d='M8 12 L18 6 L28 12' stroke='%2300a0d9' stroke-width='1.4' fill='none'/><circle cx='18' cy='6' r='1.5' fill='%2300a0d9'/></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0c0f;
-    --surface: #111418;
-    --surface2: #181d23;
-    --border: #252c36;
-    --border2: #2e3844;
-    --accent: #c8a96e;
-    --accent2: #e8c98a;
-    --accent-dim: rgba(200,169,110,0.15);
-    --accent-glow: rgba(200,169,110,0.08);
-    --text: #dce4ee;
-    --text-dim: #7a8fa8;
-    --text-muted: #4a5c70;
+    --bg: #071018;
+    --surface: #0c1824;
+    --surface2: #122030;
+    --border: #1a3048;
+    --border2: #223a55;
+    --accent: #00a0d9;
+    --accent2: #2ab5f8;
+    --accent-dim: rgba(0,160,217,0.12);
+    --accent-glow: rgba(0,160,217,0.06);
+    --navy: #00305f;
+    --navy-light: #003d7a;
+    --text: #e0e8f0;
+    --text-dim: #8298b0;
+    --text-muted: #4a6580;
     --danger: #e05c5c;
-    --success: #5cb88a;
-    --info: #5b9bd5;
-    --mono: 'IBM Plex Mono', monospace;
-    --sans: 'IBM Plex Sans', sans-serif;
-    --display: 'Playfair Display', serif;
+    --success: #4ecb8a;
+    --info: #00a0d9;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', sans-serif;
+    --display: 'Inter', sans-serif;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -46,8 +49,8 @@
     position: fixed;
     inset: 0;
     background-image:
-      linear-gradient(rgba(200,169,110,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(200,169,110,0.03) 1px, transparent 1px);
+      linear-gradient(rgba(0,160,217,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,160,217,0.04) 1px, transparent 1px);
     background-size: 40px 40px;
     pointer-events: none;
     z-index: 0;
@@ -62,7 +65,7 @@
     justify-content: space-between;
     padding: 0 28px;
     height: 62px;
-    background: rgba(10,12,15,0.95);
+    background: rgba(7,16,24,0.95);
     border-bottom: 1px solid var(--border);
     backdrop-filter: blur(12px);
   }
@@ -82,10 +85,14 @@
   .logo-icon svg { width: 100%; height: 100%; }
 
   .logo-text {
-    font-family: var(--display);
-    font-size: 20px;
+    font-family: var(--sans);
+    font-size: 18px;
     font-weight: 700;
-    letter-spacing: 0.02em;
+    letter-spacing: -0.01em;
+    color: #ffffff;
+  }
+
+  .logo-text span {
     color: var(--accent);
   }
 
@@ -93,9 +100,9 @@
     font-family: var(--mono);
     font-size: 9px;
     color: var(--text-muted);
-    letter-spacing: 0.18em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    margin-top: -2px;
+    margin-top: -1px;
   }
 
   .header-badges {
@@ -267,7 +274,7 @@
     justify-content: space-between;
     padding: 12px 24px;
     border-bottom: 1px solid var(--border);
-    background: rgba(10,12,15,0.8);
+    background: rgba(7,16,24,0.8);
   }
 
   .chat-title {
@@ -341,11 +348,11 @@
   }
 
   .welcome h1 {
-    font-family: var(--display);
+    font-family: var(--sans);
     font-size: 28px;
     font-weight: 700;
-    color: var(--accent);
-    letter-spacing: 0.01em;
+    color: #ffffff;
+    letter-spacing: -0.01em;
   }
 
   .welcome p {
@@ -450,7 +457,7 @@
 
   .msg.user .msg-bubble {
     background: var(--accent-dim);
-    border-color: rgba(200,169,110,0.3);
+    border-color: rgba(0,160,217,0.3);
     color: var(--text);
     border-radius: 10px 4px 10px 10px;
     max-width: 100%;
@@ -525,8 +532,8 @@
   }
 
   .msg-bubble .info-box {
-    background: rgba(200,169,110,0.07);
-    border: 1px solid rgba(200,169,110,0.2);
+    background: rgba(0,160,217,0.07);
+    border: 1px solid rgba(0,160,217,0.2);
     border-left: 3px solid var(--accent);
     border-radius: 4px;
     padding: 10px 14px;
@@ -588,7 +595,7 @@
   .input-area {
     padding: 16px 24px 20px;
     border-top: 1px solid var(--border);
-    background: rgba(10,12,15,0.9);
+    background: rgba(7,16,24,0.9);
     backdrop-filter: blur(12px);
   }
 
@@ -631,7 +638,7 @@
     border-radius: 7px;
     border: none;
     background: var(--accent);
-    color: #0a0c0f;
+    color: #ffffff;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -764,7 +771,7 @@
 
   .calc-btn:hover {
     background: var(--accent);
-    color: #0a0c0f;
+    color: #ffffff;
   }
 
   .calc-result {
@@ -910,18 +917,18 @@
   <div class="logo">
     <div class="logo-icon">
       <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1" y="1" width="34" height="34" rx="6" stroke="#c8a96e" stroke-width="1.2"/>
-        <rect x="6" y="22" width="24" height="3" rx="1" fill="#c8a96e"/>
-        <rect x="10" y="12" width="3" height="10" rx="1" fill="#c8a96e" opacity="0.7"/>
-        <rect x="23" y="12" width="3" height="10" rx="1" fill="#c8a96e" opacity="0.7"/>
-        <path d="M8 12 L18 6 L28 12" stroke="#c8a96e" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.9"/>
-        <circle cx="18" cy="6" r="1.5" fill="#c8a96e"/>
-        <line x1="18" y1="6" x2="18" y2="22" stroke="#c8a96e" stroke-width="0.8" stroke-dasharray="2 2" opacity="0.4"/>
+        <rect x="1" y="1" width="34" height="34" rx="6" stroke="#00a0d9" stroke-width="1.2" fill="rgba(0,48,95,0.3)"/>
+        <rect x="6" y="22" width="24" height="3" rx="1" fill="#00a0d9"/>
+        <rect x="10" y="12" width="3" height="10" rx="1" fill="#2ab5f8" opacity="0.7"/>
+        <rect x="23" y="12" width="3" height="10" rx="1" fill="#2ab5f8" opacity="0.7"/>
+        <path d="M8 12 L18 6 L28 12" stroke="#00a0d9" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.9"/>
+        <circle cx="18" cy="6" r="1.5" fill="#2ab5f8"/>
+        <line x1="18" y1="6" x2="18" y2="22" stroke="#00a0d9" stroke-width="0.8" stroke-dasharray="2 2" opacity="0.4"/>
       </svg>
     </div>
     <div>
-      <div class="logo-text">StructoAI</div>
-      <div class="logo-sub">Agent Ingénierie Structurelle</div>
+      <div class="logo-text">Expert <span>Structure</span></div>
+      <div class="logo-sub">by GPH · Ingénierie Structurelle</div>
     </div>
   </div>
   <div class="header-badges">
@@ -1020,7 +1027,7 @@
   <!-- CHAT AREA -->
   <div class="chat-area">
     <div class="chat-topbar">
-      <span class="chat-title">Session <span>#struct-2026</span> — IA Structurelle v3.1</span>
+      <span class="chat-title">Session <span>#struct-2026</span> — Expert Structure by GPH</span>
       <div style="display:flex;align-items:center;gap:12px;">
         <button class="new-chat-btn" onclick="newConversation()" title="Nouvelle conversation">＋</button>
         <span style="font-family:var(--mono);font-size:9.5px;color:var(--text-muted);">MODÈLE EN LIGNE</span>
@@ -1031,9 +1038,9 @@
     <div class="messages" id="messages">
       <!-- Welcome screen -->
       <div class="welcome" id="welcome">
-        <div class="welcome-icon">🏛️</div>
-        <h1>Agent Structurel IA</h1>
-        <p>Votre expert en ingénierie structurelle des bâtiments. Posez vos questions sur les calculs, normes Eurocodes, béton armé, acier, charpente, géotechnique, parasismique et bien plus.</p>
+        <div class="welcome-icon">🏗️</div>
+        <h1>Expert Structure <span style="color:var(--accent)">by GPH</span></h1>
+        <p>Votre assistant IA en ingénierie structurelle des bâtiments. Posez vos questions sur les calculs, normes Eurocodes, béton armé, acier, charpente, géotechnique, parasismique et bien plus.</p>
         <div class="welcome-examples">
           <div class="example-card" onclick="sendQuick('Explique-moi les différentes classes d\'exposition du béton selon EN 1992-1-1 et comment choisir la classe appropriée.')">
             <div class="ec-tag">EN 1992 · Béton</div>
@@ -1178,7 +1185,7 @@
 </div>
 
 <script>
-const SYSTEM_PROMPT = `Tu es StructoAI, un expert en ingénierie structurelle des bâtiments de très haut niveau. Tu maîtrises parfaitement toutes les normes actuelles :
+const SYSTEM_PROMPT = `Tu es Expert Structure by GPH, un assistant IA expert en ingénierie structurelle des bâtiments de très haut niveau. Tu maîtrises parfaitement toutes les normes actuelles :
 
 **NORMES EUROPÉENNES (Eurocodes) :**
 - EN 1990 : Bases de calcul des structures (ELU, ELS, combinaisons)
@@ -1265,9 +1272,9 @@ function newConversation() {
   const msgs = document.getElementById('messages');
   msgs.innerHTML = `
     <div class="welcome" id="welcome">
-      <div class="welcome-icon">🏛️</div>
-      <h1>Agent Structurel IA</h1>
-      <p>Votre expert en ingénierie structurelle des bâtiments. Posez vos questions sur les calculs, normes Eurocodes, béton armé, acier, charpente, géotechnique, parasismique et bien plus.</p>
+      <div class="welcome-icon">🏗️</div>
+      <h1>Expert Structure <span style="color:var(--accent)">by GPH</span></h1>
+      <p>Votre assistant IA en ingénierie structurelle des bâtiments. Posez vos questions sur les calculs, normes Eurocodes, béton armé, acier, charpente, géotechnique, parasismique et bien plus.</p>
       <div class="welcome-examples">
         <div class="example-card" onclick="sendQuick('Explique-moi les différentes classes d\\'exposition du béton selon EN 1992-1-1 et comment choisir la classe appropriée.')">
           <div class="ec-tag">EN 1992 · Béton</div>
@@ -1385,10 +1392,10 @@ function appendMsg(role, content, raw = false) {
 
   if (role === 'assistant') {
     div.innerHTML = `
-      <div class="msg-avatar">🏛️</div>
+      <div class="msg-avatar">🏗️</div>
       <div class="msg-content">
         <div class="msg-bubble">${raw ? content : formatResponse(content)}</div>
-        <div class="msg-meta">${new Date().toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'})} · StructoAI</div>
+        <div class="msg-meta">${new Date().toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'})} · Expert Structure</div>
       </div>`;
   } else {
     div.innerHTML = `
@@ -1410,7 +1417,7 @@ function showTyping() {
   div.className = 'msg assistant';
   div.id = 'typing-indicator';
   div.innerHTML = `
-    <div class="msg-avatar">🏛️</div>
+    <div class="msg-avatar">🏗️</div>
     <div class="msg-content">
       <div class="typing"><span></span><span></span><span></span></div>
     </div>`;
