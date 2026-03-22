@@ -808,12 +808,92 @@
   .check-ok { color: var(--success); }
   .check-fail { color: var(--danger); }
 
+  /* ── MOBILE TOGGLES ── */
+  .mobile-toggles {
+    display: none;
+    gap: 6px;
+  }
+
+  .mobile-toggle {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    color: var(--text-dim);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .mobile-toggle:hover, .mobile-toggle.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  .new-chat-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    color: var(--text-dim);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .new-chat-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  /* ── OVERLAY for mobile panels ── */
+  .panel-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 50;
+  }
+
+  .panel-overlay.visible { display: block; }
+
   /* ── RESPONSIVE ── */
   @media (max-width: 1100px) {
-    .calc-panel { display: none; }
+    .calc-panel {
+      display: none;
+      position: fixed;
+      right: 0;
+      top: 62px;
+      bottom: 0;
+      z-index: 60;
+      width: 320px;
+    }
+    .calc-panel.open { display: flex; }
+    .mobile-toggles { display: flex; }
   }
+
   @media (max-width: 780px) {
-    .sidebar { display: none; }
+    .sidebar {
+      display: none;
+      position: fixed;
+      left: 0;
+      top: 62px;
+      bottom: 0;
+      z-index: 60;
+      width: 300px;
+    }
+    .sidebar.open { display: flex; }
+    .header-badges { display: none; }
   }
 </style>
 </head>
@@ -844,7 +924,15 @@
     <span class="badge">ASCE 7</span>
     <span class="badge">ACI 318</span>
   </div>
+  <div class="mobile-toggles">
+    <button class="mobile-toggle" onclick="toggleSidebar()" title="Normes & accès rapide">☰</button>
+    <button class="mobile-toggle" onclick="toggleCalcPanel()" title="Calculatrice">📐</button>
+    <button class="new-chat-btn" onclick="newConversation()" title="Nouvelle conversation">＋</button>
+  </div>
 </header>
+
+<!-- OVERLAY -->
+<div class="panel-overlay" id="panelOverlay" onclick="closeAllPanels()"></div>
 
 <!-- MAIN -->
 <div class="main">
@@ -927,7 +1015,8 @@
   <div class="chat-area">
     <div class="chat-topbar">
       <span class="chat-title">Session <span>#struct-2026</span> — IA Structurelle v3.1</span>
-      <div style="display:flex;align-items:center;gap:8px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="new-chat-btn" onclick="newConversation()" title="Nouvelle conversation">＋</button>
         <span style="font-family:var(--mono);font-size:9.5px;color:var(--text-muted);">MODÈLE EN LIGNE</span>
         <div class="status-dot"></div>
       </div>
@@ -1030,13 +1119,13 @@
         <div class="calc-input-row">
           <label>Profilé</label>
           <select id="c_profil">
-            <option value="6080,3650">IPE200 — Iz=6080, I=1943</option>
-            <option value="14270,3650">IPE240</option>
-            <option value="25170,2100">IPE270</option>
-            <option value="53590,2100" selected>IPE300 — I=8356</option>
-            <option value="74680,2100">IPE330</option>
-            <option value="11770,2100">IPE360</option>
-            <option value="16270,2100">IPE400</option>
+            <option value="IPE200">IPE200 — I=1943 cm⁴</option>
+            <option value="IPE240">IPE240 — I=3892 cm⁴</option>
+            <option value="IPE270">IPE270 — I=5790 cm⁴</option>
+            <option value="IPE300" selected>IPE300 — I=8356 cm⁴</option>
+            <option value="IPE330">IPE330 — I=11770 cm⁴</option>
+            <option value="IPE360">IPE360 — I=16270 cm⁴</option>
+            <option value="IPE400">IPE400 — I=23130 cm⁴</option>
           </select>
         </div>
         <div class="calc-input-row">
@@ -1063,12 +1152,12 @@
           <input type="number" id="f_L" value="2" min="0.5" max="20" step="0.1">
         </div>
         <div class="calc-input-row">
-          <label>Sol cu (kPa) / φ (°)</label>
-          <input type="number" id="f_cu" value="100" min="10" max="500">
+          <label id="f_cu_label">Angle φ (°)</label>
+          <input type="number" id="f_cu" value="30" min="1" max="500">
         </div>
         <div class="calc-input-row">
           <label>Type de sol</label>
-          <select id="f_type">
+          <select id="f_type" onchange="updateSoilLabel()">
             <option value="cohesif">Cohésif (argile)</option>
             <option value="frottant" selected>Frottant (sable)</option>
           </select>
@@ -1134,6 +1223,78 @@ Tu réponds exclusivement en français.`;
 
 let conversationHistory = [];
 let isThinking = false;
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('panelOverlay');
+  const calcPanel = document.querySelector('.calc-panel');
+  calcPanel.classList.remove('open');
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('visible', sidebar.classList.contains('open'));
+}
+
+function toggleCalcPanel() {
+  const calcPanel = document.querySelector('.calc-panel');
+  const overlay = document.getElementById('panelOverlay');
+  const sidebar = document.querySelector('.sidebar');
+  sidebar.classList.remove('open');
+  calcPanel.classList.toggle('open');
+  overlay.classList.toggle('visible', calcPanel.classList.contains('open'));
+}
+
+function closeAllPanels() {
+  document.querySelector('.sidebar').classList.remove('open');
+  document.querySelector('.calc-panel').classList.remove('open');
+  document.getElementById('panelOverlay').classList.remove('visible');
+}
+
+function newConversation() {
+  conversationHistory = [];
+  const msgs = document.getElementById('messages');
+  msgs.innerHTML = `
+    <div class="welcome" id="welcome">
+      <div class="welcome-icon">🏛️</div>
+      <h1>Agent Structurel IA</h1>
+      <p>Votre expert en ingénierie structurelle des bâtiments. Posez vos questions sur les calculs, normes Eurocodes, béton armé, acier, charpente, géotechnique, parasismique et bien plus.</p>
+      <div class="welcome-examples">
+        <div class="example-card" onclick="sendQuick('Explique-moi les différentes classes d\\'exposition du béton selon EN 1992-1-1 et comment choisir la classe appropriée.')">
+          <div class="ec-tag">EN 1992 · Béton</div>
+          <div class="ec-text">Classes d'exposition béton et durabilité</div>
+        </div>
+        <div class="example-card" onclick="sendQuick('Comment vérifier la stabilité au flambement d\\'un poteau acier selon EN 1993-1-1 ? Donnez-moi la méthode complète.')">
+          <div class="ec-tag">EN 1993 · Acier</div>
+          <div class="ec-text">Stabilité au flambement des poteaux acier</div>
+        </div>
+        <div class="example-card" onclick="sendQuick('Quelles sont les règles de dimensionnement pour les fondations superficielles selon EN 1997 et la méthode de capacité portante ?')">
+          <div class="ec-tag">EN 1997 · Géo</div>
+          <div class="ec-text">Fondations superficielles & capacité portante</div>
+        </div>
+        <div class="example-card" onclick="sendQuick('Explique la méthode des éléments finis pour l\\'analyse structurelle et quand l\\'utiliser par rapport aux méthodes analytiques classiques.')">
+          <div class="ec-tag">Analyse · FEM</div>
+          <div class="ec-text">Méthode des éléments finis en structure</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function updateSoilLabel() {
+  const type = document.getElementById('f_type').value;
+  const label = document.getElementById('f_cu_label');
+  const input = document.getElementById('f_cu');
+  if (type === 'cohesif') {
+    label.textContent = 'Cohésion cu (kPa)';
+    input.value = 100;
+  } else {
+    label.textContent = 'Angle φ (°)';
+    input.value = 30;
+  }
+}
 
 function toggleChip(el) {
   el.classList.toggle('on');
@@ -1227,7 +1388,7 @@ function appendMsg(role, content, raw = false) {
     div.innerHTML = `
       <div class="msg-avatar">U</div>
       <div class="msg-content">
-        <div class="msg-bubble">${content.replace(/\n/g,'<br>')}</div>
+        <div class="msg-bubble">${escapeHtml(content).replace(/\n/g,'<br>')}</div>
         <div class="msg-meta" style="text-align:right">${new Date().toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'})} · Vous</div>
       </div>`;
   }
@@ -1278,8 +1439,6 @@ async function sendMessage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
         system: SYSTEM_PROMPT,
         messages: conversationHistory
       })
@@ -1288,16 +1447,19 @@ async function sendMessage() {
     const data = await response.json();
     removeTyping();
 
-    if (data.content && data.content[0]) {
+    if (data.error) {
+      const errMsg = data.error.message || data.error;
+      appendMsg('assistant', `⚠️ Erreur API : ${escapeHtml(String(errMsg))}`, true);
+    } else if (data.content && data.content[0]) {
       const reply = data.content[0].text;
       conversationHistory.push({ role: 'assistant', content: reply });
       appendMsg('assistant', reply);
     } else {
-      appendMsg('assistant', '⚠️ Erreur de réponse. Veuillez réessayer.');
+      appendMsg('assistant', '⚠️ Réponse inattendue du serveur. Veuillez réessayer.', true);
     }
   } catch (err) {
     removeTyping();
-    appendMsg('assistant', `⚠️ Erreur de connexion : ${err.message}`);
+    appendMsg('assistant', '⚠️ Impossible de joindre le serveur. Vérifiez votre connexion.', true);
   }
 
   isThinking = false;
@@ -1357,8 +1519,7 @@ function calcFleche() {
     'IPE400': { I: 23130, h: 400 }
   };
 
-  const sel = document.getElementById('c_profil');
-  const profil_name = sel.options[sel.selectedIndex].text.split(' ')[0];
+  const profil_name = document.getElementById('c_profil').value;
   const I_cm4 = profils[profil_name]?.I || 8356;
   const I_mm4 = I_cm4 * 1e4; // mm⁴
   const E = 210000; // MPa = N/mm²
